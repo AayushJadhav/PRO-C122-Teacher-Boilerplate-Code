@@ -78,11 +78,46 @@ function displayBot() {
 }
 
 //askBot function
+function askbot() {
+    $("#send_button").click(function(){
+        var user_text = $("#bot_input_text").val()
 
-            //Write AJAX call here
-            $.ajax({
+        if (user_text != "") {
+            $("#chat_messages").append('<div class="user__messages>' + user_text + '</div>')
+        }
 
+        $("#bot_input_text").val("")
 
-            });
+        chat_input_data = {
+            "user_text": user_text
+        }
 
+        $.ajax({
+            type: 'POST',
+            url: '/bot-response',
+            data: JSON.stringify(chat_input_data),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                $("#chat_messages").append('<div class="bot__messages">' + result.bot_response + '</div>')
+
+                $(".chatbox__messages__cotainer").animate({ scrollTop: $(".chatbox__messages__cotainer")[0].scrollHeight }, 1000)
+            },
+            error: function (result) {
+                alert(result.responseJSON.message)
+            }
+        })
+    })
+
+    $("#bot_input_text").keypress(function (e) {
+        if (e.keyCode == 13) {
+            $("#send_button").click()
+        }
+        /** Alt.
+        if (e.which == 13) {
+            $("#send_button").click()
+        }
+        */
+    })
+}
        
